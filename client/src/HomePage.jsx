@@ -1,20 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { Search, MapPin } from "lucide-react";
 import Navbar from "./components/Navbar";
+import { categories } from "./data/categories";
 
 
 const BRAND = { bg: "#F6F7FB", dark: "#0B1220" };
-
-const categories = [
-  { id: 1, name: "Auto & Moto", emoji: "🚗" },
-  { id: 2, name: "Imobiliare", emoji: "🏠" },
-  { id: 3, name: "Electronice", emoji: "📱" },
-  { id: 4, name: "Casă & Grădină", emoji: "🪑" },
-  { id: 5, name: "Modă", emoji: "👗" },
-  { id: 6, name: "Sport & Hobby", emoji: "⚽" },
-  { id: 7, name: "Copii", emoji: "🍼" },
-  { id: 8, name: "Animale", emoji: "🐶" },
-];
 
 function CategoryCard({ cat, onClick }) {
   return (
@@ -38,32 +28,7 @@ function CategoryCard({ cat, onClick }) {
   );
 }
 
-function AnnouncementCard({ announcement }) {
-  return (
-    <article className="flex flex-col gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-slate-500">
-            {announcement.category}
-          </p>
-          <h3 className="text-lg font-semibold text-slate-900">
-            {announcement.title}
-          </h3>
-        </div>
-        <span className="rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
-          {announcement.price} lei
-        </span>
-      </div>
-      <p className="text-sm text-slate-600">{announcement.description}</p>
-      <div className="flex items-center justify-between text-xs text-slate-500">
-        <span>{announcement.location}</span>
-        <span>{announcement.contact}</span>
-      </div>
-    </article>
-  );
-}
-
-export default function HomePage() {
+export default function HomePage({ onAddAnnouncement, onSelectCategory }) {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("Toată țara");
   const [announcements, setAnnouncements] = useState([
@@ -151,7 +116,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen" style={{ background: BRAND.bg }}>
-      <Navbar />
+      <Navbar onAddAnnouncement={onAddAnnouncement} />
 
       {/* Search bar */}
       <div className="mx-auto max-w-6xl px-4 pt-6">
@@ -195,7 +160,7 @@ export default function HomePage() {
             <CategoryCard
               key={cat.id}
               cat={cat}
-              onClick={() => setFormData((prev) => ({ ...prev, category: cat.name }))}
+              onClick={() => onSelectCategory(cat.name)}
             />
           ))}
         </div>
