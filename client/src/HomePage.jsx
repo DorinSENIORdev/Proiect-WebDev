@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar";
 import { categories } from "./data/categories";
 
 
-const BRAND = { bg: "#F6F7FB", dark: "#0B1220" };
 
 function CategoryCard({ cat, onClick }) {
   return (
@@ -34,12 +33,88 @@ export default function HomePage({
 }) {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("Toată țara");
+  const [announcements, setAnnouncements] = useState([
+    {
+      id: 1,
+      title: "Bicicletă de oraș, stare excelentă",
+      price: "750",
+      category: "Sport & Hobby",
+      location: "Cluj-Napoca",
+      contact: "Andrei Pop",
+      description:
+        "Bicicletă folosită ocazional, frâne noi și revizie completă.",
+    },
+    {
+      id: 2,
+      title: "Canapea extensibilă modernă",
+      price: "1200",
+      category: "Casă & Grădină",
+      location: "București",
+      contact: "Maria I.",
+      description: "Perfectă pentru living, livrare rapidă în București.",
+    },
+  ]);
+  const [formData, setFormData] = useState({
+    title: "",
+    price: "",
+    category: categories[0]?.name ?? "",
+    location: "",
+    contact: "",
+    description: "",
+  });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return categories;
     return categories.filter((c) => c.name.toLowerCase().includes(q));
   }, [query]);
+
+  const filteredAnnouncements = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return announcements;
+    return announcements.filter((announcement) =>
+      [announcement.title, announcement.category, announcement.location]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+    );
+  }, [announcements, query]);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (!formData.title.trim()) {
+      return;
+    }
+
+    setAnnouncements((prev) => [
+      {
+        id: Date.now(),
+        title: formData.title.trim(),
+        price: formData.price.trim() || "0",
+        category: formData.category,
+        location: formData.location.trim() || "Nespecificat",
+        contact: formData.contact.trim() || "Anonim",
+        description:
+          formData.description.trim() ||
+          "Descrierea nu a fost completată încă.",
+      },
+      ...prev,
+    ]);
+
+    setFormData((prev) => ({
+      ...prev,
+      title: "",
+      price: "",
+      location: "",
+      contact: "",
+      description: "",
+    }));
+  };
 
   return (
     <div className="min-h-screen" style={{ background: BRAND.bg }}>
@@ -91,6 +166,9 @@ export default function HomePage({
             />
           ))}
         </div>
+
+        
+        
       </main>
     </div>
   );
