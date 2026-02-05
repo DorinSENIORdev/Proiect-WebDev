@@ -16,6 +16,7 @@ export default function AnnouncementFormPage({
     location: "",
     contact: "",
     description: "",
+    imageUrl: "",
   });
 
   const handleChange = (event) => {
@@ -38,6 +39,7 @@ export default function AnnouncementFormPage({
       contact: formData.contact.trim() || "Anonim",
       description:
         formData.description.trim() || "Descrierea nu a fost completată încă.",
+      imageUrl: formData.imageUrl,
     });
 
     setFormData((prev) => ({
@@ -47,7 +49,18 @@ export default function AnnouncementFormPage({
       location: "",
       contact: "",
       description: "",
+      imageUrl: "",
     }));
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      setFormData((prev) => ({ ...prev, imageUrl: "" }));
+      return;
+    }
+    const imageUrl = URL.createObjectURL(file);
+    setFormData((prev) => ({ ...prev, imageUrl }));
   };
 
   return (
@@ -148,6 +161,23 @@ export default function AnnouncementFormPage({
               className="rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               placeholder="Spune câteva detalii despre produs."
             />
+          </label>
+
+          <label className="grid gap-3 text-sm font-medium text-slate-700">
+            Poză
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+            />
+            {formData.imageUrl && (
+              <img
+                src={formData.imageUrl}
+                alt="Previzualizare anunț"
+                className="h-48 w-full rounded-xl object-cover"
+              />
+            )}
           </label>
 
           <button

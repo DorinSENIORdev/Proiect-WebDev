@@ -2,11 +2,8 @@ import React, { useMemo, useState } from "react";
 import { Search, MapPin } from "lucide-react";
 import Navbar from "./components/Navbar";
 import { categories } from "./data/categories";
-import AnnouncementCard from "./components/AnnouncementCard";
 
 
-
-const BRAND = { bg: "#F6F7FB", dark: "#0B1220" };
 
 function CategoryCard({ cat, onClick }) {
   return (
@@ -30,7 +27,10 @@ function CategoryCard({ cat, onClick }) {
   );
 }
 
-export default function HomePage({ onAddAnnouncement, onSelectCategory }) {
+export default function HomePage({
+  onAddAnnouncement = () => {},
+  onSelectCategory = () => {},
+}) {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("Toată țara");
   const [announcements, setAnnouncements] = useState([

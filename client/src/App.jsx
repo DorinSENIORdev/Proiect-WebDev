@@ -16,6 +16,7 @@ export default function App() {
       location: "Cluj-Napoca",
       contact: "Andrei Pop",
       description: "Bicicletă folosită ocazional, frâne noi și revizie completă.",
+      imageUrl: "",
     },
     {
       id: 2,
@@ -25,6 +26,7 @@ export default function App() {
       location: "București",
       contact: "Maria I.",
       description: "Perfectă pentru living, livrare rapidă în București.",
+      imageUrl: "",
     },
     {
       id: 3,
@@ -34,6 +36,7 @@ export default function App() {
       location: "Brașov",
       contact: "Mihai R.",
       description: "Motor 1.6 TDI, consum redus, toate reviziile la zi.",
+      imageUrl: "",
     },
   ]);
 
@@ -69,4 +72,3 @@ export default function App() {
     </>
   );
 }
-
