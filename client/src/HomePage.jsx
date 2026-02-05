@@ -1,20 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { Search, MapPin } from "lucide-react";
 import Navbar from "./components/Navbar";
+import { categories } from "./data/categories";
 
 
 const BRAND = { bg: "#F6F7FB", dark: "#0B1220" };
-
-const categories = [
-  { id: 1, name: "Auto & Moto", emoji: "🚗" },
-  { id: 2, name: "Imobiliare", emoji: "🏠" },
-  { id: 3, name: "Electronice", emoji: "📱" },
-  { id: 4, name: "Casă & Grădină", emoji: "🪑" },
-  { id: 5, name: "Modă", emoji: "👗" },
-  { id: 6, name: "Sport & Hobby", emoji: "⚽" },
-  { id: 7, name: "Mama & Copilul", emoji: "🍼" },
-  { id: 8, name: "Animale", emoji: "🐶" },
-];
 
 function CategoryCard({ cat, onClick }) {
   return (
@@ -38,8 +28,10 @@ function CategoryCard({ cat, onClick }) {
   );
 }
 
-export default function HomePage() {
- 
+export default function HomePage({
+  onAddAnnouncement = () => {},
+  onSelectCategory = () => {},
+}) {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("Toată țara");
 
@@ -51,7 +43,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen" style={{ background: BRAND.bg }}>
-      <Navbar />
+      <Navbar onAddAnnouncement={onAddAnnouncement} />
 
       {/* Search bar */}
       <div className="mx-auto max-w-6xl px-4 pt-6">
@@ -95,7 +87,7 @@ export default function HomePage() {
             <CategoryCard
               key={cat.id}
               cat={cat}
-              onClick={() => navigate(`/category/${cat.id}`)}
+              onClick={() => onSelectCategory(cat.name)}
             />
           ))}
         </div>
