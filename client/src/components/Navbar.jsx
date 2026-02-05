@@ -30,28 +30,47 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Icons (desktop) */}
-        <nav className="hidden items-right gap-5 text-white/85 md:flex">
-          <button className="hover:text-white" type="button" aria-label="Favorite">
-            <Heart size={18} />
-          </button>
-          <button className="hover:text-white" type="button" aria-label="Notificări">
-            <Bell size={18} />
-          </button>
-          <button className="flex items-center gap-2 hover:text-white" type="button">
-            <User size={18} /> Contul tău
-          </button>
-        </nav>
+      <div className="flex items-center gap-2 text-white">
+            {/* MOBILE: doar butonul de adăugare */}
+            <button
+                className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm md:hidden"
+                type="button"
+            >
+                <Plus size={18} />
+                Anunț
+            </button>
 
-        {/* Add button */}
-        <button
-          className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm hover:shadow-md"
-          type="button"
-          onClick={() => alert("Mai târziu: pagina de adăugat anunț")}
-        >
-          <Plus size={18} />
-          Adaugă anunț nou
-        </button>
+            {/* DESKTOP */}
+            <div className="hidden items-center gap-5 md:flex">
+                {/* Favorite */}
+                <button className="rounded-full p-2 hover:bg-white/10" type="button">
+                <Heart size={20} />
+                </button>
+
+                {/* Notificări */}
+                <button className="rounded-full p-2 hover:bg-white/10" type="button">
+                <Bell size={20} />
+                </button>
+
+                {/* Cont */}
+                <button className="flex items-center gap-2 rounded-full p-2 hover:bg-white/10" type="button">
+                <User size={20} />
+                <span className="text-sm">Contul meu</span>
+                </button>
+
+                {/* Separator */}
+                <div className="h-6 w-px bg-white/20" />
+
+                {/* Adaugă anunț */}
+                <button
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm hover:shadow-md"
+                type="button"
+                >
+                <Plus size={18} />
+                Adaugă anunț
+                </button>
+            </div>
+            </div>
       </div>
     </header>
   );
