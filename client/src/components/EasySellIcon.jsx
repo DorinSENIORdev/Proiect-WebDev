@@ -5,8 +5,8 @@ export default function EasySellIcon({ size = 40 }) {
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="EasySell">
       <defs>
         <linearGradient id="bg" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#8B5CF6" />
-          <stop offset="1" stopColor="#4C1D95" />
+          <stop stopColor="#14B8A6" />
+          <stop offset="1" stopColor="#0F766E" />
         </linearGradient>
         <linearGradient id="shine" x1="14" y1="10" x2="44" y2="44" gradientUnits="userSpaceOnUse">
           <stop stopColor="white" stopOpacity="0.45" />
@@ -35,7 +35,7 @@ export default function EasySellIcon({ size = 40 }) {
         />
         <path
           d="M26 24C26 20.7 28.7 18 32 18C35.3 18 38 20.7 38 24"
-          stroke="#6D28D9"
+          stroke="#0F766E"
           strokeWidth="3"
           strokeLinecap="round"
           opacity="0.9"
@@ -44,7 +44,7 @@ export default function EasySellIcon({ size = 40 }) {
         {/* Price tag overlay */}
         <path
           d="M36.5 30.5C36.5 29.1 37.6 28 39 28H45C46.1 28 47 28.9 47 30V36C47 37.1 46.1 38 45 38H41.7C41.2 38 40.7 37.8 40.4 37.4L37.1 34.1C36.7 33.7 36.5 33.2 36.5 32.7V30.5Z"
-          fill="#A78BFA"
+          fill="#F59E0B"
         />
         <circle cx="43.2" cy="31.7" r="1.6" fill="white" opacity="0.95" />
 

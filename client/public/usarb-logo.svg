@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-label="USARB Balti">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#1f9d55"/>
+      <stop offset="100%" stop-color="#0f5c2d"/>
+    </radialGradient>
+  </defs>
+  <circle cx="110" cy="110" r="106" fill="url(#g)" stroke="#e5efe7" stroke-width="6"/>
+  <circle cx="110" cy="110" r="82" fill="none" stroke="#cde3d2" stroke-width="2" opacity="0.7"/>
+  <text x="110" y="42" text-anchor="middle" fill="#f3fbf5" font-family="Georgia, serif" font-size="11" font-weight="700">
+    UNIVERSITATEA DE STAT
+  </text>
+  <text x="110" y="57" text-anchor="middle" fill="#f3fbf5" font-family="Georgia, serif" font-size="11" font-weight="700">
+    "ALECU RUSSO"
+  </text>
+  <text x="110" y="122" text-anchor="middle" fill="#f3fbf5" font-family="Georgia, serif" font-size="30" font-weight="700">
+    BALTI
+  </text>
+  <text x="110" y="145" text-anchor="middle" fill="#d9f2df" font-family="Georgia, serif" font-size="12">
+    SCIENTIA • CULTURA
+  </text>
+  <rect x="65" y="158" width="90" height="22" rx="11" fill="#d3ead8" opacity="0.95"/>
+  <text x="110" y="173" text-anchor="middle" fill="#0f5c2d" font-family="Georgia, serif" font-size="13" font-weight="700">
+    1945
+  </text>
+</svg>

@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { ArrowLeft, ImagePlus } from "lucide-react";
 import Navbar from "./components/Navbar";
 import { categories } from "./data/categories";
 
-const BRAND = { bg: "#F6F7FB" };
+const FIELD_STYLE =
+  "rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100";
 
 export default function AnnouncementFormPage({
   onAddAnnouncement,
   onBackHome,
   initialCategory,
+  onGoHome,
 }) {
+  const [selectedFileName, setSelectedFileName] = useState("Nicio imagine aleasa");
   const [formData, setFormData] = useState({
     title: "",
     price: "",
@@ -26,9 +30,7 @@ export default function AnnouncementFormPage({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!formData.title.trim()) {
-      return;
-    }
+    if (!formData.title.trim()) return;
 
     onAddAnnouncement({
       id: Date.now(),
@@ -37,8 +39,7 @@ export default function AnnouncementFormPage({
       category: formData.category,
       location: formData.location.trim() || "Nespecificat",
       contact: formData.contact.trim() || "Anonim",
-      description:
-        formData.description.trim() || "Descrierea nu a fost completată încă.",
+      description: formData.description.trim() || "Fara descriere.",
       imageUrl: formData.imageUrl,
     });
 
@@ -51,74 +52,76 @@ export default function AnnouncementFormPage({
       description: "",
       imageUrl: "",
     }));
+    setSelectedFileName("Nicio imagine aleasa");
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) {
+      setSelectedFileName("Nicio imagine aleasa");
       setFormData((prev) => ({ ...prev, imageUrl: "" }));
       return;
     }
-    const imageUrl = URL.createObjectURL(file);
-    setFormData((prev) => ({ ...prev, imageUrl }));
+    setSelectedFileName(file.name);
+    setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
   };
 
   return (
-    <div className="min-h-screen" style={{ background: BRAND.bg }}>
-      <Navbar showAddButton={false} />
+    <div className="min-h-screen">
+      <Navbar onLogoClick={onGoHome} showAddButton={false} />
 
-      <main className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-12">
-        <div className="flex items-center justify-between gap-4">
+      <main className="mx-auto max-w-5xl overflow-x-hidden px-4 py-10">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-slate-900">
-              Adaugă un anunț nou
+            <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
+              Publicare rapida
+            </p>
+            <h1 className="mt-1 text-3xl font-black text-slate-900 md:text-4xl">
+              Adauga un anunt nou
             </h1>
-            <p className="mt-2 text-sm text-slate-500">
-              Completează detaliile ca să publici rapid anunțul tău.
+            <p className="mt-2 text-sm text-slate-600">
+              Completeaza informatiile principale, apoi publica in cateva secunde.
             </p>
           </div>
-          <button
-            className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300"
-            onClick={onBackHome}
-            type="button"
-          >
-            Înapoi
+          <button className="btn-secondary-luxe" onClick={onBackHome} type="button">
+            <ArrowLeft size={16} />
+            Inapoi
           </button>
         </div>
 
         <form
-          className="grid gap-5 rounded-3xl bg-white p-8 shadow-sm ring-1 ring-black/5"
+          className="mt-6 grid gap-5 overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"
           onSubmit={handleSubmit}
         >
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
+          <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Titlu
             <input
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className="rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-              placeholder="Ex: Laptop pentru gaming"
+              className={FIELD_STYLE}
+              placeholder="Ex: Laptop gaming in stare excelenta"
             />
           </label>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="grid gap-2 text-sm font-medium text-slate-700">
-              Preț (lei)
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              Pret (lei)
               <input
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
-                className="rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                className={FIELD_STYLE}
                 placeholder="Ex: 1500"
               />
             </label>
-            <label className="grid gap-2 text-sm font-medium text-slate-700">
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Categoria
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                className={FIELD_STYLE}
               >
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.name}>
@@ -129,62 +132,75 @@ export default function AnnouncementFormPage({
             </label>
           </div>
 
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
-            Locație
-            <input
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className="rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-              placeholder="Ex: Iași"
-            />
-          </label>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              Locatie
+              <input
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                className={FIELD_STYLE}
+                placeholder="Ex: Iasi"
+              />
+            </label>
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              Contact
+              <input
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+                className={FIELD_STYLE}
+                placeholder="Ex: 0777777777"
+              />
+            </label>
+          </div>
 
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
-            Persoană de contact
-            <input
-              name="contact"
-              value={formData.contact}
-              onChange={handleChange}
-              className="rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-              placeholder="Ex: Alexandra"
-            />
-          </label>
-
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
+          <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Descriere
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               rows={5}
-              className="rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-              placeholder="Spune câteva detalii despre produs."
+              className={FIELD_STYLE}
+              placeholder="Descrie produsul cat mai clar: starea, detalii, livrare."
             />
           </label>
 
-          <label className="grid gap-3 text-sm font-medium text-slate-700">
-            Poză
+          <label className="grid gap-3 text-sm font-semibold text-slate-700">
+            <span className="inline-flex items-center gap-2">
+              <ImagePlus size={16} />
+              Fotografie
+            </span>
             <input
+              id="announcement-image"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+              className="sr-only"
             />
+            <div className="flex w-full flex-wrap items-center gap-3">
+              <label
+                htmlFor="announcement-image"
+                className="btn-secondary-luxe cursor-pointer !border-blue-200 !bg-blue-50 !text-blue-900"
+              >
+                Alege imagine
+              </label>
+              <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-500">
+                {selectedFileName}
+              </span>
+            </div>
             {formData.imageUrl && (
               <img
                 src={formData.imageUrl}
-                alt="Previzualizare anunț"
-                className="h-48 w-full rounded-xl object-cover"
+                alt="Preview anunt"
+                className="h-52 w-full rounded-xl object-cover"
               />
             )}
           </label>
 
-          <button
-            className="rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
-            type="submit"
-          >
-            Publică anunț
+          <button className="btn-primary-luxe" type="submit">
+            Publica anunt
           </button>
         </form>
       </main>
