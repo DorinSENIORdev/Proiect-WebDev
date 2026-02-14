@@ -84,6 +84,7 @@ export default function Navbar({
           <div className="mx-auto mt-3 grid max-w-6xl gap-2 rounded-2xl border border-white/10 bg-white/10 p-2 backdrop-blur">
             <button
               className="btn-secondary-luxe !justify-start !border-white/20 !bg-white/95"
+              onClick={() => setIsMobileMenuOpen(false)}
               type="button"
             >
               <User size={17} />

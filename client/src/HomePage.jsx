@@ -47,7 +47,10 @@ export default function HomePage({
 
   return (
     <div className="min-h-screen">
-      <Navbar onAddAnnouncement={onAddAnnouncement} onLogoClick={onGoHome} />
+      <Navbar
+        onAddAnnouncement={onAddAnnouncement}
+        onLogoClick={onGoHome}
+      />
 
       <section className="relative overflow-hidden border-b border-slate-200/80 bg-white/70">
         <div

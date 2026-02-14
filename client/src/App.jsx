@@ -1,9 +1,9 @@
 import { useState } from "react";
-import "./index.css";
 import AnnouncementFormPage from "./AnnouncementFormPage";
 import CategoryPage from "./CategoryPage";
 import Footer from "./components/Footer";
 import HomePage from "./HomePage";
+import "./index.css";
 
 export default function App() {
   const [page, setPage] = useState({ type: "home", category: null });
@@ -42,6 +42,7 @@ export default function App() {
 
   const handleAddAnnouncement = (announcement) => {
     setAnnouncements((prev) => [announcement, ...prev]);
+    setPage({ type: "home", category: null });
   };
 
   return (
@@ -53,18 +54,20 @@ export default function App() {
           onSelectCategory={(category) => setPage({ type: "category", category })}
         />
       )}
+
       {page.type === "create" && (
         <AnnouncementFormPage
+          initialCategory={page.category}
           onAddAnnouncement={handleAddAnnouncement}
           onBackHome={() => setPage({ type: "home", category: null })}
-          initialCategory={page.category}
           onGoHome={() => setPage({ type: "home", category: null })}
         />
       )}
+
       {page.type === "category" && (
         <CategoryPage
-          category={page.category}
           announcements={announcements}
+          category={page.category}
           onAddAnnouncement={() => setPage({ type: "create", category: null })}
           onBackHome={() => setPage({ type: "home", category: null })}
           onGoHome={() => setPage({ type: "home", category: null })}

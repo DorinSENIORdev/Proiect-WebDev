@@ -26,7 +26,10 @@ export default function CategoryPage({
 
   return (
     <div className="min-h-screen">
-      <Navbar onAddAnnouncement={onAddAnnouncement} onLogoClick={onGoHome} />
+      <Navbar
+        onAddAnnouncement={onAddAnnouncement}
+        onLogoClick={onGoHome}
+      />
 
       <main className="mx-auto max-w-6xl px-4 py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">

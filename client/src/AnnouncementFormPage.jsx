@@ -13,6 +13,8 @@ export default function AnnouncementFormPage({
   onGoHome,
 }) {
   const [selectedFileName, setSelectedFileName] = useState("Nicio imagine aleasa");
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     price: "",
@@ -32,6 +34,8 @@ export default function AnnouncementFormPage({
     event.preventDefault();
     if (!formData.title.trim()) return;
 
+    setIsSubmitting(true);
+    setSubmitError("");
     onAddAnnouncement({
       id: Date.now(),
       title: formData.title.trim(),
@@ -53,6 +57,7 @@ export default function AnnouncementFormPage({
       imageUrl: "",
     }));
     setSelectedFileName("Nicio imagine aleasa");
+    setIsSubmitting(false);
   };
 
   const handleImageChange = (event) => {
@@ -63,12 +68,25 @@ export default function AnnouncementFormPage({
       return;
     }
     setSelectedFileName(file.name);
-    setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      setFormData((prev) => ({ ...prev, imageUrl: result }));
+    };
+    reader.onerror = () => {
+      setSubmitError("Imaginea nu a putut fi citita.");
+      setFormData((prev) => ({ ...prev, imageUrl: "" }));
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
     <div className="min-h-screen">
-      <Navbar onLogoClick={onGoHome} showAddButton={false} />
+      <Navbar
+        onLogoClick={onGoHome}
+        showAddButton={false}
+      />
 
       <main className="mx-auto max-w-5xl overflow-x-hidden px-4 py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -200,8 +218,11 @@ export default function AnnouncementFormPage({
           </label>
 
           <button className="btn-primary-luxe" type="submit">
-            Publica anunt
+            {isSubmitting ? "Se publica..." : "Publica anunt"}
           </button>
+          {submitError && (
+            <p className="text-sm font-semibold text-rose-600">{submitError}</p>
+          )}
         </form>
       </main>
     </div>
