@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Search, Sparkles } from "lucide-react";
 import Navbar from "./components/Navbar";
 import AnnouncementCard from "./components/AnnouncementCard";
@@ -11,6 +11,10 @@ export default function CategoryPage({
   onGoHome,
 }) {
   const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [category]);
 
   const filteredAnnouncements = useMemo(() => {
     const q = query.trim().toLowerCase();
