@@ -3,7 +3,7 @@ import { useState } from "react";
 import EasySellIcon from "./EasySellIcon";
 
 const BRAND = {
-  name: "EasySell",
+  name: "EasySeLLDima",
 };
 
 export default function Navbar({
