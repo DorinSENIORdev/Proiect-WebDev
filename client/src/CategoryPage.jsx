@@ -6,9 +6,14 @@ import AnnouncementCard from "./components/AnnouncementCard";
 export default function CategoryPage({
   category,
   announcements,
+  isLoading = false,
   onAddAnnouncement,
   onBackHome,
   onGoHome,
+  onAuthClick = () => {},
+  isAuthenticated = false,
+  currentUser = null,
+  onLogout = () => {},
 }) {
   const [query, setQuery] = useState("");
 
@@ -33,6 +38,10 @@ export default function CategoryPage({
       <Navbar
         onAddAnnouncement={onAddAnnouncement}
         onLogoClick={onGoHome}
+        onAuthClick={onAuthClick}
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onLogout={onLogout}
       />
 
       <main className="mx-auto max-w-6xl px-4 py-10">
@@ -71,7 +80,11 @@ export default function CategoryPage({
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {filteredAnnouncements.length === 0 ? (
+          {isLoading ? (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
+              Se incarca anunturile...
+            </div>
+          ) : filteredAnnouncements.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
               Nu exista anunturi pentru aceasta categorie.
             </div>

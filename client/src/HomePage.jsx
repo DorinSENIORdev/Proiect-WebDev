@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ChevronRight, MapPin, Search, Sparkles } from "lucide-react";
 import Navbar from "./components/Navbar";
 import { categories } from "./data/categories";
@@ -35,21 +35,23 @@ export default function HomePage({
   onAddAnnouncement = () => {},
   onGoHome = () => {},
   onSelectCategory = () => {},
+  onAuthClick = () => {},
+  isAuthenticated = false,
+  currentUser = null,
+  onLogout = () => {},
 }) {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("Toata tara");
-
-  const filteredCategories = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return categories;
-    return categories.filter((c) => c.name.toLowerCase().includes(q));
-  }, [query]);
 
   return (
     <div className="min-h-screen">
       <Navbar
         onAddAnnouncement={onAddAnnouncement}
         onLogoClick={onGoHome}
+        onAuthClick={onAuthClick}
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onLogout={onLogout}
       />
 
       <section className="relative overflow-hidden border-b border-slate-200/80 bg-white/70">
@@ -123,12 +125,12 @@ export default function HomePage({
             className="rounded-2xl px-4 py-2 text-sm font-semibold"
             style={{ background: BRAND.accentSoft, color: BRAND.deep }}
           >
-            {filteredCategories.length} categorii
+            {categories.length} categorii
           </div>
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredCategories.map((cat) => (
+          {categories.map((cat) => (
             <CategoryCard
               key={cat.id}
               cat={cat}

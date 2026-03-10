@@ -11,6 +11,10 @@ export default function AnnouncementFormPage({
   onBackHome,
   initialCategory,
   onGoHome,
+  onAuthClick = () => {},
+  isAuthenticated = false,
+  currentUser = null,
+  onLogout = () => {},
 }) {
   const [selectedFileName, setSelectedFileName] = useState("Nicio imagine aleasa");
   const [submitError, setSubmitError] = useState("");
@@ -30,34 +34,47 @@ export default function AnnouncementFormPage({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!formData.title.trim()) return;
+    if (!formData.title.trim()) {
+      setSubmitError("Titlul este obligatoriu.");
+      return;
+    }
+
+    if (!isAuthenticated) {
+      setSubmitError("Trebuie sa fii autentificat ca sa publici.");
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitError("");
-    onAddAnnouncement({
-      id: Date.now(),
-      title: formData.title.trim(),
-      price: formData.price.trim() || "0",
-      category: formData.category,
-      location: formData.location.trim() || "Nespecificat",
-      contact: formData.contact.trim() || "Anonim",
-      description: formData.description.trim() || "Fara descriere.",
-      imageUrl: formData.imageUrl,
-    });
 
-    setFormData((prev) => ({
-      ...prev,
-      title: "",
-      price: "",
-      location: "",
-      contact: "",
-      description: "",
-      imageUrl: "",
-    }));
-    setSelectedFileName("Nicio imagine aleasa");
-    setIsSubmitting(false);
+    try {
+      await onAddAnnouncement({
+        title: formData.title.trim(),
+        price: formData.price.trim() || "0",
+        category: formData.category,
+        location: formData.location.trim() || "Nespecificat",
+        contact: formData.contact.trim() || "Anonim",
+        description: formData.description.trim() || "Fara descriere.",
+        imageUrl: formData.imageUrl,
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        title: "",
+        price: "",
+        location: "",
+        contact: "",
+        description: "",
+        imageUrl: "",
+      }));
+      setSelectedFileName("Nicio imagine aleasa");
+    } catch (error) {
+      setSubmitError(error.message || "Publicarea anuntului a esuat.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleImageChange = (event) => {
@@ -67,7 +84,19 @@ export default function AnnouncementFormPage({
       setFormData((prev) => ({ ...prev, imageUrl: "" }));
       return;
     }
+
+    if (!file.type.startsWith("image/")) {
+      setSubmitError("Fisierul selectat nu este o imagine.");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setSubmitError("Imaginea trebuie sa aiba maxim 2MB.");
+      return;
+    }
+
     setSelectedFileName(file.name);
+    setSubmitError("");
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -86,6 +115,10 @@ export default function AnnouncementFormPage({
       <Navbar
         onLogoClick={onGoHome}
         showAddButton={false}
+        onAuthClick={onAuthClick}
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onLogout={onLogout}
       />
 
       <main className="mx-auto max-w-5xl overflow-x-hidden px-4 py-10">

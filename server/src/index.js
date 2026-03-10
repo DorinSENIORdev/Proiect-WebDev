@@ -1,0 +1,42 @@
+import cors from "cors";
+import express from "express";
+import authRoutes from "./routes/auth.js";
+import announcementRoutes from "./routes/announcements.js";
+import { config } from "./config.js";
+import { getPool } from "./db.js";
+
+const app = express();
+
+app.use(
+  cors({
+    origin: config.clientOrigin,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.use(express.json({ limit: "3mb" }));
+
+app.get("/api/health", async (_req, res) => {
+  try {
+    const pool = await getPool();
+    await pool.request().query("SELECT 1 AS ok;");
+    return res.json({ ok: true });
+  } catch (error) {
+    return res.status(500).json({ ok: false, message: error.message });
+  }
+});
+
+app.use("/api/auth", authRoutes);
+app.use("/api/announcements", announcementRoutes);
+
+app.use((error, _req, res, _next) => {
+  // Keep internals out of the client response but log on server for debugging.
+  // eslint-disable-next-line no-console
+  console.error(error);
+  return res.status(500).json({ message: "Eroare interna pe server." });
+});
+
+app.listen(config.port, () => {
+  // eslint-disable-next-line no-console
+  console.log(`API server running on http://localhost:${config.port}`);
+});

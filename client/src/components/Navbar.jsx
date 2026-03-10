@@ -10,6 +10,10 @@ export default function Navbar({
   onAddAnnouncement,
   onLogoClick = () => {},
   showAddButton = true,
+  onAuthClick = () => {},
+  isAuthenticated = false,
+  currentUser = null,
+  onLogout = () => {},
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -55,13 +59,36 @@ export default function Navbar({
             >
               <Bell size={20} />
             </button>
-            <button
-              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-white/90 transition duration-300 hover:-translate-y-0.5 hover:bg-white/15 hover:text-white"
-              type="button"
-            >
-              <User size={19} />
-              <span>Contul meu</span>
-            </button>
+            {isAuthenticated ? (
+              <>
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-2 text-sm font-semibold text-white">
+                  <User size={18} />
+                  {currentUser?.name ?? "Contul meu"}
+                </span>
+                <button
+                  className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-white/90 transition duration-300 hover:-translate-y-0.5 hover:bg-white/15 hover:text-white"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onLogout();
+                  }}
+                  type="button"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button
+                className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-white/90 transition duration-300 hover:-translate-y-0.5 hover:bg-white/15 hover:text-white"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onAuthClick();
+                }}
+                type="button"
+              >
+                <User size={19} />
+                <span>Autentificare</span>
+              </button>
+            )}
             {showAddButton && (
               <>
                 <div className="h-6 w-px bg-white/20" />
@@ -82,14 +109,31 @@ export default function Navbar({
       {isMobileMenuOpen && (
         <div className="border-t border-white/10 bg-slate-950/35 px-4 pb-4 md:hidden">
           <div className="mx-auto mt-3 grid max-w-6xl gap-2 rounded-2xl border border-white/10 bg-white/10 p-2 backdrop-blur">
-            <button
-              className="btn-secondary-luxe !justify-start !border-white/20 !bg-white/95"
-              onClick={() => setIsMobileMenuOpen(false)}
-              type="button"
-            >
-              <User size={17} />
-              Contul meu
-            </button>
+            {isAuthenticated ? (
+              <button
+                className="btn-secondary-luxe !justify-start !border-white/20 !bg-white/95"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onLogout();
+                }}
+                type="button"
+              >
+                <User size={17} />
+                Logout ({currentUser?.name ?? "cont"})
+              </button>
+            ) : (
+              <button
+                className="btn-secondary-luxe !justify-start !border-white/20 !bg-white/95"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onAuthClick();
+                }}
+                type="button"
+              >
+                <User size={17} />
+                Autentificare
+              </button>
+            )}
             <button
               className="btn-secondary-luxe !justify-start !border-white/20 !bg-white/95"
               type="button"
