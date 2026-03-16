@@ -8,3 +8,17 @@ export const categories = [
   { id: 7, name: "Copii", emoji: "\uD83C\uDF7C" },
   { id: 8, name: "Animale", emoji: "\uD83D\uDC36" },
 ];
+
+export function slugifyCategoryName(name) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " si ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function findCategoryBySlug(slug) {
+  return categories.find((category) => slugifyCategoryName(category.name) === slug) ?? null;
+}

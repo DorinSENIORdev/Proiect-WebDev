@@ -6,10 +6,21 @@ import { config } from "./config.js";
 import { getPool } from "./db.js";
 
 const app = express();
+const localDevOriginPattern = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/;
 
 app.use(
   cors({
-    origin: config.clientOrigin,
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (origin === config.clientOrigin || localDevOriginPattern.test(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Origin not allowed by CORS"));
+    },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -30,13 +41,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/announcements", announcementRoutes);
 
 app.use((error, _req, res, _next) => {
-  // Keep internals out of the client response but log on server for debugging.
-  // eslint-disable-next-line no-console
   console.error(error);
   return res.status(500).json({ message: "Eroare interna pe server." });
 });
 
 app.listen(config.port, () => {
-  // eslint-disable-next-line no-console
   console.log(`API server running on http://localhost:${config.port}`);
 });

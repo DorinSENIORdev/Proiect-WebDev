@@ -14,8 +14,7 @@ const dbOptions = {
   trustServerCertificate: readBool(process.env.DB_TRUST_SERVER_CERTIFICATE, true),
 };
 
-// Avoid passing both `port` and `instanceName` at the same time.
-// SQL Server drivers can fail instance discovery if both are set.
+
 if (process.env.DB_INSTANCE && !process.env.DB_PORT) {
   dbOptions.instanceName = process.env.DB_INSTANCE;
 }
