@@ -36,7 +36,7 @@ export async function fetchMe(token) {
   return request("/auth/me", { token });
 }
 
-export async function fetchAnnouncements({ category, q } = {}) {
+export async function fetchAnnouncements({ category, q, token } = {}) {
   const searchParams = new URLSearchParams();
   if (category) {
     searchParams.set("category", category);
@@ -48,9 +48,20 @@ export async function fetchAnnouncements({ category, q } = {}) {
   const queryString = searchParams.toString();
   const path = queryString ? `/announcements?${queryString}` : "/announcements";
 
-  return request(path);
+  return request(path, { token });
 }
 
 export async function createAnnouncement(token, payload) {
   return request("/announcements", { method: "POST", body: payload, token });
+}
+
+export async function toggleAnnouncementLike(token, announcementId, isCurrentlyLiked) {
+  return request(`/announcements/${announcementId}/likes`, {
+    method: isCurrentlyLiked ? "DELETE" : "POST",
+    token,
+  });
+}
+
+export async function fetchNotifications(token) {
+  return request("/announcements/notifications", { token });
 }

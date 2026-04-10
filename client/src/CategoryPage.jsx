@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Search, Sparkles } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import AnnouncementCard from "./components/AnnouncementCard";
 
@@ -11,11 +12,22 @@ export default function CategoryPage({
   onBackHome,
   onGoHome,
   onAuthClick = () => {},
+  onOpenMyAnnouncements = () => {},
+  onOpenFavorites = () => {},
+  onOpenNotifications = () => {},
+  onToggleLike = () => {},
+  pendingLikeIds = [],
   isAuthenticated = false,
   currentUser = null,
+  favoritesCount = 0,
+  notificationsCount = 0,
   onLogout = () => {},
 }) {
-  const [query, setQuery] = useState("");
+  const location = useLocation();
+  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const initialQuery = searchParams.get("q") ?? "";
+  const locationFilter = searchParams.get("location") ?? "";
+  const [query, setQuery] = useState(initialQuery);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -23,15 +35,24 @@ export default function CategoryPage({
 
   const filteredAnnouncements = useMemo(() => {
     const q = query.trim().toLowerCase();
+    const normalizedLocationFilter = locationFilter.trim().toLowerCase();
     return announcements.filter((announcement) => {
       if (announcement.category !== category) return false;
+      if (
+        normalizedLocationFilter
+        && !announcement.location.toLowerCase().includes(normalizedLocationFilter)
+      ) {
+        return false;
+      }
+
       if (!q) return true;
+
       return [announcement.title, announcement.location, announcement.description]
         .join(" ")
         .toLowerCase()
         .includes(q);
     });
-  }, [announcements, category, query]);
+  }, [announcements, category, locationFilter, query]);
 
   return (
     <div className="min-h-screen">
@@ -39,8 +60,13 @@ export default function CategoryPage({
         onAddAnnouncement={onAddAnnouncement}
         onLogoClick={onGoHome}
         onAuthClick={onAuthClick}
+        onOpenMyAnnouncements={onOpenMyAnnouncements}
+        onOpenFavorites={onOpenFavorites}
+        onOpenNotifications={onOpenNotifications}
         isAuthenticated={isAuthenticated}
         currentUser={currentUser}
+        favoritesCount={favoritesCount}
+        notificationsCount={notificationsCount}
         onLogout={onLogout}
       />
 
@@ -53,6 +79,11 @@ export default function CategoryPage({
             <h1 className="mt-1 text-3xl font-black text-slate-900 md:text-4xl">
               {category}
             </h1>
+            {locationFilter && (
+              <p className="mt-2 text-sm font-medium text-slate-500">
+                Locatie filtrata: {locationFilter}
+              </p>
+            )}
           </div>
           <button className="btn-secondary-luxe" onClick={onBackHome} type="button">
             <ArrowLeft size={16} />
@@ -86,11 +117,23 @@ export default function CategoryPage({
             </div>
           ) : filteredAnnouncements.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
-              Nu exista anunturi pentru aceasta categorie.
+              {query.trim()
+                ? "Nu exista anunturi care sa corespunda cautarii."
+                : locationFilter
+                  ? "Nu exista anunturi pentru locatia selectata."
+                  : "Nu exista anunturi pentru aceasta categorie."}
             </div>
           ) : (
             filteredAnnouncements.map((announcement) => (
-              <AnnouncementCard key={announcement.id} announcement={announcement} />
+              <AnnouncementCard
+                key={announcement.id}
+                announcement={announcement}
+                onToggleLike={onToggleLike}
+                onAuthClick={onAuthClick}
+                isAuthenticated={isAuthenticated}
+                currentUser={currentUser}
+                isLikeUpdating={pendingLikeIds.includes(announcement.id)}
+              />
             ))
           )}
         </div>

@@ -41,3 +41,25 @@ BEGIN
   CREATE INDEX IX_Announcements_CreatedAt ON dbo.Announcements(createdAt DESC);
 END;
 GO
+
+IF OBJECT_ID(N'dbo.AnnouncementLikes', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.AnnouncementLikes (
+    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    announcementId INT NOT NULL,
+    userId INT NOT NULL,
+    createdAt DATETIME2(0) NOT NULL CONSTRAINT DF_AnnouncementLikes_CreatedAt DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_AnnouncementLikes_Announcements
+      FOREIGN KEY (announcementId) REFERENCES dbo.Announcements(id) ON DELETE CASCADE,
+    CONSTRAINT FK_AnnouncementLikes_Users
+      FOREIGN KEY (userId) REFERENCES dbo.Users(id)
+  );
+
+  CREATE UNIQUE INDEX UX_AnnouncementLikes_AnnouncementUser
+    ON dbo.AnnouncementLikes(announcementId, userId);
+  CREATE INDEX IX_AnnouncementLikes_UserId
+    ON dbo.AnnouncementLikes(userId, createdAt DESC);
+  CREATE INDEX IX_AnnouncementLikes_AnnouncementId
+    ON dbo.AnnouncementLikes(announcementId, createdAt DESC);
+END;
+GO

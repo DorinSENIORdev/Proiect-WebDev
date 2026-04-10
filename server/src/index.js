@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { ensureSchema } from "./bootstrap.js";
 import authRoutes from "./routes/auth.js";
 import announcementRoutes from "./routes/announcements.js";
 import { config } from "./config.js";
@@ -45,6 +46,15 @@ app.use((error, _req, res, _next) => {
   return res.status(500).json({ message: "Eroare interna pe server." });
 });
 
-app.listen(config.port, () => {
-  console.log(`API server running on http://localhost:${config.port}`);
+async function startServer() {
+  await ensureSchema();
+
+  app.listen(config.port, () => {
+    console.log(`API server running on http://localhost:${config.port}`);
+  });
+}
+
+startServer().catch((error) => {
+  console.error("Server startup failed:", error);
+  process.exit(1);
 });

@@ -22,7 +22,7 @@ if (process.env.DB_INSTANCE && !process.env.DB_PORT) {
 export const config = {
   port: Number(process.env.PORT ?? 4000),
   clientOrigin: process.env.CLIENT_ORIGIN ?? "http://localhost:5173",
-  jwtSecret: process.env.JWT_SECRET ?? "dev_secret_change_me",
+  jwtSecret: process.env.JWT_SECRET ?? "Usarb1234",
   db: {
     server: process.env.DB_SERVER ?? "localhost",
     port: process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined,

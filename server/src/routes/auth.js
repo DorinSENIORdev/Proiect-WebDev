@@ -90,12 +90,12 @@ router.post("/login", async (req, res, next) => {
 
     const user = result.recordset[0];
     if (!user) {
-      return res.status(401).json({ message: "Credentiale invalide." });
+      return res.status(401).json({ message: "Date invalide." });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.passwordHash);
     if (!isValidPassword) {
-      return res.status(401).json({ message: "Credentiale invalide." });
+      return res.status(401).json({ message: "Date invalide." });
     }
 
     const token = createToken(user);

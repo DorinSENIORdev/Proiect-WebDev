@@ -12,8 +12,13 @@ export default function AnnouncementFormPage({
   initialCategory,
   onGoHome,
   onAuthClick = () => {},
+  onOpenMyAnnouncements = () => {},
+  onOpenFavorites = () => {},
+  onOpenNotifications = () => {},
   isAuthenticated = false,
   currentUser = null,
+  favoritesCount = 0,
+  notificationsCount = 0,
   onLogout = () => {},
 }) {
   const [selectedFileName, setSelectedFileName] = useState("Nicio imagine aleasa");
@@ -116,8 +121,13 @@ export default function AnnouncementFormPage({
         onLogoClick={onGoHome}
         showAddButton={false}
         onAuthClick={onAuthClick}
+        onOpenMyAnnouncements={onOpenMyAnnouncements}
+        onOpenFavorites={onOpenFavorites}
+        onOpenNotifications={onOpenNotifications}
         isAuthenticated={isAuthenticated}
         currentUser={currentUser}
+        favoritesCount={favoritesCount}
+        notificationsCount={notificationsCount}
         onLogout={onLogout}
       />
 

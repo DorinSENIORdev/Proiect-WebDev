@@ -12,8 +12,13 @@ export default function AuthPage({
   onBackHome,
   onGoHome,
   onAuthClick,
+  onOpenMyAnnouncements = () => {},
+  onOpenFavorites = () => {},
+  onOpenNotifications = () => {},
   isAuthenticated,
   currentUser,
+  favoritesCount = 0,
+  notificationsCount = 0,
   onLogout,
 }) {
   const [mode, setMode] = useState(defaultMode === "register" ? "register" : "login");
@@ -60,8 +65,13 @@ export default function AuthPage({
         onLogoClick={onGoHome}
         showAddButton={false}
         onAuthClick={onAuthClick}
+        onOpenMyAnnouncements={onOpenMyAnnouncements}
+        onOpenFavorites={onOpenFavorites}
+        onOpenNotifications={onOpenNotifications}
         isAuthenticated={isAuthenticated}
         currentUser={currentUser}
+        favoritesCount={favoritesCount}
+        notificationsCount={notificationsCount}
         onLogout={onLogout}
       />
 

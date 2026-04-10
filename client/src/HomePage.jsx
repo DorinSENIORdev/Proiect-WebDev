@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronRight, MapPin, Search, Sparkles } from "lucide-react";
 import Navbar from "./components/Navbar";
 import { categories } from "./data/categories";
@@ -31,17 +31,68 @@ function CategoryCard({ cat, onClick }) {
   );
 }
 
+function normalizeText(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function isCountrywideLocation(value) {
+  const normalizedLocation = normalizeText(value);
+  return !normalizedLocation || normalizedLocation === "toata tara";
+}
+
 export default function HomePage({
   onAddAnnouncement = () => {},
   onGoHome = () => {},
   onSelectCategory = () => {},
+  onOpenMyAnnouncements = () => {},
+  onOpenFavorites = () => {},
+  onOpenNotifications = () => {},
+  announcements = [],
+  isLoadingAnnouncements = false,
   onAuthClick = () => {},
   isAuthenticated = false,
   currentUser = null,
+  favoritesCount = 0,
+  notificationsCount = 0,
   onLogout = () => {},
 }) {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("Toata tara");
+  const normalizedQuery = normalizeText(query);
+  const normalizedLocation = normalizeText(location);
+  const hasLocationFilter = !isCountrywideLocation(location);
+  const matchedAnnouncements = useMemo(() => {
+    if (!normalizedQuery && !hasLocationFilter) {
+      return [];
+    }
+
+    return announcements
+      .filter((announcement) => {
+        const matchesTitle = !normalizedQuery
+          || normalizeText(announcement.title).startsWith(normalizedQuery);
+        const matchesLocation = !hasLocationFilter
+          || normalizeText(announcement.location).includes(normalizedLocation);
+
+        return matchesTitle && matchesLocation;
+      })
+      .slice(0, 6);
+  }, [announcements, hasLocationFilter, normalizedLocation, normalizedQuery]);
+
+  const handleSearch = () => {
+    if (!matchedAnnouncements.length) {
+      return;
+    }
+
+    onSelectCategory(
+      matchedAnnouncements[0].category,
+      query.trim(),
+      hasLocationFilter ? location.trim() : ""
+    );
+  };
 
   return (
     <div className="min-h-screen">
@@ -49,8 +100,13 @@ export default function HomePage({
         onAddAnnouncement={onAddAnnouncement}
         onLogoClick={onGoHome}
         onAuthClick={onAuthClick}
+        onOpenMyAnnouncements={onOpenMyAnnouncements}
+        onOpenFavorites={onOpenFavorites}
+        onOpenNotifications={onOpenNotifications}
         isAuthenticated={isAuthenticated}
         currentUser={currentUser}
+        favoritesCount={favoritesCount}
+        notificationsCount={notificationsCount}
         onLogout={onLogout}
       />
 
@@ -79,15 +135,66 @@ export default function HomePage({
             className="mt-8 grid gap-3 rounded-3xl border border-slate-200/80 p-3 shadow-lg md:grid-cols-[1fr_220px_150px]"
             style={{ background: BRAND.surface }}
           >
-            <label className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-slate-50 px-3 py-3">
-              <Search className="text-slate-400" size={18} />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full bg-transparent text-sm outline-none"
-                placeholder="Ce cauti azi?"
-              />
-            </label>
+            <div className="relative">
+              <label className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-slate-50 px-3 py-3">
+                <Search className="text-slate-400" size={18} />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleSearch();
+                    }
+                  }}
+                  className="w-full bg-transparent text-sm outline-none"
+                  placeholder="Ce cauti azi?"
+                />
+              </label>
+
+              {(normalizedQuery || hasLocationFilter) && (
+                <div className="absolute left-0 right-0 top-[calc(100%+0.75rem)] z-20 overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_24px_50px_-24px_rgba(15,23,42,0.35)]">
+                  <div className="border-b border-slate-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Rezultate rapide
+                  </div>
+
+                  {isLoadingAnnouncements ? (
+                    <div className="px-4 py-4 text-sm text-slate-500">
+                      Se incarca anunturile...
+                    </div>
+                  ) : matchedAnnouncements.length === 0 ? (
+                    <div className="px-4 py-4 text-sm text-slate-500">
+                      Nu exista anunturi pentru filtrele selectate.
+                    </div>
+                  ) : (
+                    matchedAnnouncements.map((announcement) => (
+                      <button
+                        key={announcement.id}
+                        type="button"
+                        onClick={() =>
+                          onSelectCategory(
+                            announcement.category,
+                            announcement.title,
+                            hasLocationFilter ? location.trim() : ""
+                          )
+                        }
+                        className="flex w-full items-start justify-between gap-4 border-t border-slate-100 px-4 py-4 text-left transition hover:bg-slate-50"
+                      >
+                        <div>
+                          <p className="text-sm font-bold text-slate-900">{announcement.title}</p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {announcement.category} - {announcement.location}
+                          </p>
+                        </div>
+                        <span className="shrink-0 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700">
+                          {announcement.price} lei
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
             <label className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-slate-50 px-3 py-3">
               <MapPin className="text-slate-400" size={18} />
               <input
@@ -100,6 +207,8 @@ export default function HomePage({
             <button
               className="btn-primary-luxe group relative"
               type="button"
+              onClick={handleSearch}
+              disabled={!matchedAnnouncements.length}
             >
               <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 opacity-0 transition duration-500 group-hover:translate-x-6 group-hover:opacity-100" />
               <span className="relative inline-flex items-center justify-center gap-2">
